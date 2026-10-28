@@ -1,0 +1,2099 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IntelliSchool AI | School Management</title>
+
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f0f5fb;
+      --panel: #ffffff;
+      --panel-soft: #f6f9fd;
+      --border: #dce6f1;
+      --text: #172f49;
+      --muted: #73869c;
+      --accent: #2878d4;
+      --accent-hover: #1d63b3;
+      --teal: #25a8c7;
+      --blue: #438fe3;
+      --orange: #f5a36c;
+      --red: #e96c78;
+      --sidebar: #102a43;
+      --sidebar-deep: #091b2e;
+      --sidebar-text: #c5d6e8;
+      --shadow: 0 5px 18px rgba(22, 58, 83, .055);
+    }
+
+    html[data-theme="dark"] {
+      color-scheme: dark;
+      --bg: #071522;
+      --panel: #102438;
+      --panel-soft: #152d44;
+      --border: #29445f;
+      --text: #edf6ff;
+      --muted: #a0b6c9;
+      --accent: #3c91f0;
+      --accent-hover: #2677d0;
+      --teal: #36bfd4;
+      --blue: #72baff;
+      --orange: #ffb879;
+      --red: #ff8299;
+      --sidebar: #071727;
+      --sidebar-deep: #05111f;
+      --sidebar-text: #c0d2e1;
+      --shadow: 0 5px 20px rgba(0, 0, 0, .18);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Inter, "Segoe UI", Arial, sans-serif;
+      font-size: 14px;
+      transition: background-color .22s ease, color .22s ease, border-color .22s ease;
+    }
+
+    button, input, select, textarea {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    button:focus-visible, input:focus-visible,
+    select:focus-visible, textarea:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    .app {
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      position: fixed;
+      z-index: 5;
+      inset: 0 auto 0 0;
+      width: 245px;
+      padding: 22px 14px;
+      overflow-y: auto;
+      color: white;
+      background: linear-gradient(180deg, var(--sidebar), var(--sidebar-deep));
+      border-right: 1px solid var(--border);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      padding: 3px 9px 28px;
+    }
+
+    .logo {
+      display: grid;
+      flex: 0 0 41px;
+      width: 41px;
+      height: 41px;
+      place-items: center;
+      border-radius: 12px;
+      color: white;
+      font-size: 22px;
+      background: linear-gradient(135deg, #2878d4, #26b4c8);
+    }
+
+    .brand h2 {
+      margin: 0 0 5px;
+      color: white;
+      font-size: 15px;
+      white-space: nowrap;
+    }
+
+    .brand small {
+      color: #9bb5c7;
+      font-size: 9px;
+      letter-spacing: 1px;
+      white-space: nowrap;
+    }
+
+    .nav-label {
+      padding: 15px 11px 8px;
+      color: #7993a8;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1.3px;
+    }
+
+    .nav {
+      display: flex;
+      width: 100%;
+      align-items: center;
+      gap: 11px;
+      margin: 3px 0;
+      padding: 11px;
+      border: 0;
+      border-radius: 8px;
+      color: var(--sidebar-text);
+      background: transparent;
+      text-align: left;
+      transition: background .2s;
+    }
+
+    .nav:hover {
+      background: rgba(255, 255, 255, .08);
+      color: white;
+    }
+
+    .nav.active {
+      color: white;
+      background: linear-gradient(100deg, #2878d4, #249fca);
+      box-shadow: inset 3px 0 #77c8ff, 0 4px 12px rgba(40, 120, 212, .18);
+    }
+
+    .nav-icon {
+      display: inline-grid;
+      width: 20px;
+      flex: 0 0 20px;
+      place-items: center;
+      font-size: 16px;
+    }
+
+    .nav-text {
+      flex: 1;
+      font-size: 12px;
+    }
+
+    .nav-badge {
+      padding: 3px 6px;
+      border-radius: 5px;
+      color: #bdf8ed;
+      background: rgba(22, 184, 166, .18);
+      font-size: 9px;
+    }
+
+    .sidebar-bottom {
+      margin-top: 25px;
+      padding: 13px;
+      border: 1px solid #29475a;
+      border-radius: 11px;
+      background: rgba(255, 255, 255, .045);
+    }
+
+    .sidebar-bottom b {
+      font-size: 12px;
+    }
+
+    .sidebar-bottom p {
+      color: #a1b6c7;
+      font-size: 11px;
+      line-height: 1.6;
+    }
+
+    .main {
+      min-width: 0;
+      min-height: 100vh;
+      margin-left: 245px;
+      padding: 24px 29px 36px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      margin-bottom: 28px;
+    }
+
+    .crumb {
+      margin-bottom: 7px;
+      color: var(--muted);
+      font-size: 10px;
+      letter-spacing: 1px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 25px;
+      letter-spacing: -.6px;
+    }
+
+    .subtitle {
+      margin-top: 7px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+    }
+
+    .search {
+      width: 200px;
+      min-width: 0;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      color: var(--text);
+      background: var(--panel);
+    }
+
+    .icon-btn, .btn {
+      padding: 10px 13px;
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      color: var(--text);
+      background: var(--panel);
+      white-space: nowrap;
+    }
+
+    .icon-btn:hover, .btn:hover {
+      border-color: var(--accent);
+    }
+
+    .btn.primary {
+      border-color: var(--accent);
+      color: white;
+      background: var(--accent);
+    }
+
+    .btn.primary:hover {
+      background: var(--accent-hover);
+    }
+
+    .profile {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding-left: 3px;
+    }
+
+    .avatar {
+      display: grid;
+      width: 35px;
+      height: 35px;
+      flex: 0 0 35px;
+      place-items: center;
+      border-radius: 10px;
+      color: var(--accent);
+      background: #e4f0ff;
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    html[data-theme="dark"] .avatar {
+      color: #a9d6ff;
+      background: #183b59;
+    }
+
+    .profile b {
+      font-size: 11px;
+    }
+
+    .profile small {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 10px;
+    }
+
+    .page {
+      display: none;
+      animation: appear .18s ease;
+    }
+
+    .page.active {
+      display: block;
+    }
+
+    @keyframes appear {
+      from { opacity: .55; transform: translateY(3px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .section-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin: 0 0 16px;
+    }
+
+    .section-head h2, .card h2 {
+      margin: 0;
+      font-size: 15px;
+    }
+
+    .muted {
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+      margin-bottom: 19px;
+    }
+
+    .card {
+      min-width: 0;
+      padding: 18px;
+      border: 1px solid var(--border);
+      border-radius: 13px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+    }
+
+    .stat-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .stat-label {
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .stat-icon {
+      display: grid;
+      width: 38px;
+      height: 38px;
+      flex: 0 0 38px;
+      place-items: center;
+      border-radius: 11px;
+      font-size: 18px;
+    }
+
+    .purple { color: #6c5cdb; background: #e9e6ff; }
+    .green { color: #1687a0; background: #e0f4fa; }
+    .blue { color: #337fce; background: #e1efff; }
+    .orange { color: #d98646; background: #fff0e3; }
+
+    html[data-theme="dark"] .purple { color: #c0b5ff; background: #302b51; }
+    html[data-theme="dark"] .green { color: #78d8ed; background: #183a50; }
+    html[data-theme="dark"] .blue { color: #91c7ff; background: #1b3652; }
+    html[data-theme="dark"] .orange { color: #ffcb91; background: #473628; }
+
+    .stat-number {
+      margin: 17px 0 7px;
+      font-size: 26px;
+      font-weight: 750;
+      letter-spacing: -.7px;
+    }
+
+    .trend {
+      color: var(--accent);
+      font-size: 10px;
+    }
+
+    .grid-main {
+      display: grid;
+      grid-template-columns: minmax(0, 1.65fr) minmax(260px, 1fr);
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 13px;
+      color: var(--muted);
+      font-size: 10px;
+    }
+
+    .legend span::before {
+      display: inline-block;
+      width: 7px;
+      height: 7px;
+      margin-right: 6px;
+      border-radius: 50%;
+      background: var(--legend-color);
+      content: "";
+    }
+
+    .chart {
+      display: block;
+      width: 100%;
+      height: 205px;
+      margin-top: 15px;
+    }
+
+    .chart-grid {
+      stroke: var(--border);
+      stroke-width: 1;
+    }
+
+    .chart-label {
+      fill: var(--muted);
+      font-size: 10px;
+    }
+
+    .donut-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 22px;
+      padding: 23px 0 10px;
+    }
+
+    .donut {
+      display: grid;
+      width: 136px;
+      height: 136px;
+      flex: 0 0 136px;
+      place-items: center;
+      border-radius: 50%;
+      background: conic-gradient(var(--accent) 0 68%, var(--teal) 68% 88%, #dce7f0 88% 100%);
+    }
+
+    html[data-theme="dark"] .donut {
+      background: conic-gradient(var(--accent) 0 68%, var(--teal) 68% 88%, #304559 88% 100%);
+    }
+
+    .donut-inner {
+      display: grid;
+      width: 97px;
+      height: 97px;
+      place-content: center;
+      border-radius: 50%;
+      background: var(--panel);
+      text-align: center;
+    }
+
+    .donut-inner b {
+      font-size: 22px;
+    }
+
+    .donut-inner small {
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 9px;
+    }
+
+    .legend-list {
+      display: grid;
+      gap: 13px;
+      font-size: 11px;
+    }
+
+    .dot {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      margin-right: 7px;
+      border-radius: 50%;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      white-space: nowrap;
+    }
+
+    th {
+      padding: 13px 11px;
+      border-bottom: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 650;
+      text-align: left;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+    }
+
+    td {
+      padding: 13px 11px;
+      border-bottom: 1px solid var(--border);
+      font-size: 11px;
+    }
+
+    tbody tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .student {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+    }
+
+    .student .avatar {
+      width: 31px;
+      height: 31px;
+      flex-basis: 31px;
+    }
+
+    .student small {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+    }
+
+    .status {
+      display: inline-block;
+      padding: 5px 8px;
+      border-radius: 6px;
+      color: #167ca2;
+      background: #e1f2fb;
+      font-size: 10px;
+    }
+
+    .status.pending {
+      color: #a56824;
+      background: #fff0d9;
+    }
+
+    .status.absent {
+      color: #bf5268;
+      background: #ffe5ea;
+    }
+
+    html[data-theme="dark"] .status { color: #82d6f4; background: #183a50; }
+    html[data-theme="dark"] .status.pending { color: #ffd08f; background: #493624; }
+    html[data-theme="dark"] .status.absent { color: #ff9db0; background: #482636; }
+
+    .activity {
+      display: grid;
+      gap: 18px;
+      margin-top: 22px;
+    }
+
+    .activity-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 11px;
+    }
+
+    .activity-icon {
+      display: grid;
+      width: 32px;
+      height: 32px;
+      flex: 0 0 32px;
+      place-items: center;
+      border-radius: 9px;
+      background: var(--panel-soft);
+    }
+
+    .activity-item b {
+      font-size: 11px;
+    }
+
+    .activity-item p {
+      margin: 5px 0 0;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.5;
+    }
+
+    .quick-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 13px;
+    }
+
+    .quick {
+      padding: 17px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      color: var(--text);
+      background: var(--panel);
+      text-align: left;
+      transition: border .2s, transform .2s;
+    }
+
+    .quick:hover {
+      transform: translateY(-2px);
+      border-color: var(--accent);
+    }
+
+    .quick b {
+      display: block;
+      margin: 11px 0 6px;
+      font-size: 12px;
+    }
+
+    .quick small {
+      color: var(--muted);
+      font-size: 10px;
+      line-height: 1.5;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 15px;
+    }
+
+    .field {
+      display: grid;
+      align-content: start;
+      gap: 8px;
+    }
+
+    .field.full {
+      grid-column: 1 / -1;
+    }
+
+    .field label {
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .field input, .field select, .field textarea {
+      width: 100%;
+      min-width: 0;
+      padding: 11px 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      background: var(--panel-soft);
+    }
+
+    .field textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+
+    .form-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px;
+      margin-top: 17px;
+    }
+
+    .notice {
+      margin-top: 12px;
+      padding: 15px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--panel);
+    }
+
+    .notice h3 {
+      margin: 0 0 7px;
+      font-size: 12px;
+    }
+
+    .notice p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.6;
+      white-space: pre-wrap;
+    }
+
+    .chat-box {
+      display: flex;
+      min-height: 410px;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .chat-messages {
+      display: flex;
+      flex: 1;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 12px;
+      overflow-wrap: anywhere;
+    }
+
+    .message {
+      max-width: 88%;
+      padding: 12px 14px;
+      border: 1px solid var(--border);
+      border-radius: 11px;
+      font-size: 11px;
+      line-height: 1.7;
+      white-space: pre-wrap;
+    }
+
+    .message.bot {
+      align-self: flex-start;
+      background: var(--panel-soft);
+    }
+
+    .message.user {
+      align-self: flex-end;
+      border-color: var(--accent);
+      color: white;
+      background: var(--accent);
+    }
+
+    .chat-input {
+      display: flex;
+      gap: 8px;
+    }
+
+    .chat-input input {
+      width: 100%;
+      min-width: 0;
+      padding: 12px;
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      color: var(--text);
+      background: var(--panel-soft);
+    }
+
+    .suggestions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+    }
+
+    .suggestions button {
+      padding: 8px 10px;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      color: var(--text);
+      background: var(--panel-soft);
+      font-size: 10px;
+    }
+
+    .empty {
+      padding: 24px;
+      color: var(--muted);
+      text-align: center;
+      white-space: normal;
+    }
+
+    .setting-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 15px;
+      padding: 16px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .setting-row:last-child {
+      border-bottom: 0;
+    }
+
+    .setting-row b {
+      font-size: 12px;
+    }
+
+    .setting-row p {
+      margin: 5px 0 0;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.5;
+    }
+
+    .switch {
+      width: 42px;
+      height: 23px;
+      flex: 0 0 42px;
+      accent-color: var(--accent);
+      cursor: pointer;
+    }
+
+    .toast {
+      position: fixed;
+      z-index: 20;
+      right: 22px;
+      bottom: 22px;
+      display: none;
+      max-width: min(390px, calc(100vw - 35px));
+      padding: 13px 17px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--text);
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    @media (max-width: 1150px) {
+      .stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .grid-main {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 780px) {
+      .sidebar {
+        width: 67px;
+        padding: 17px 7px;
+      }
+
+      .brand {
+        padding: 0 5px 23px;
+      }
+
+      .brand-text, .nav-label, .nav-text,
+      .nav-badge, .sidebar-bottom {
+        display: none;
+      }
+
+      .brand .logo {
+        width: 42px;
+        flex-basis: 42px;
+      }
+
+      .nav {
+        justify-content: center;
+        padding: 12px 4px;
+      }
+
+      .main {
+        margin-left: 67px;
+        padding: 20px 13px 30px;
+      }
+
+      .topbar {
+        align-items: flex-start;
+        flex-wrap: wrap;
+      }
+
+      .top-actions {
+        width: 100%;
+        flex-wrap: wrap;
+      }
+
+      .search {
+        flex: 1;
+        width: auto;
+      }
+
+      .profile {
+        margin-left: auto;
+      }
+
+      .profile-text {
+        display: none;
+      }
+
+      h1 {
+        font-size: 22px;
+      }
+
+      .card {
+        padding: 14px;
+      }
+    }
+
+    @media (max-width: 470px) {
+      .stats {
+        gap: 9px;
+      }
+
+      .stat-number {
+        font-size: 22px;
+      }
+
+      .stat-label {
+        font-size: 10px;
+      }
+
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .field.full {
+        grid-column: auto;
+      }
+
+      .quick-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .donut-wrap {
+        gap: 15px;
+      }
+
+      .donut {
+        width: 112px;
+        height: 112px;
+        flex-basis: 112px;
+      }
+
+      .donut-inner {
+        width: 81px;
+        height: 81px;
+      }
+
+      .top-actions .search {
+        display: none;
+      }
+    }
+
+
+    /* Typography polish: refined hierarchy while preserving the existing UI */
+    body {
+      font-family: Inter, "Segoe UI Variable", "Segoe UI", system-ui, -apple-system, sans-serif;
+      line-height: 1.55;
+      letter-spacing: -0.08px;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+
+    h1, h2, h3, h4, strong, b, .brand h2, .nav-text, .profile b {
+      font-weight: 700;
+      letter-spacing: -0.28px;
+    }
+
+    h1 {
+      font-size: clamp(25px, 2vw, 29px);
+      line-height: 1.2;
+      letter-spacing: -0.9px;
+      font-weight: 780;
+    }
+
+    .subtitle {
+      font-size: 12.5px;
+      letter-spacing: 0.02px;
+      line-height: 1.7;
+    }
+
+    .crumb, .nav-label {
+      font-weight: 750;
+      letter-spacing: 1.15px;
+      text-transform: uppercase;
+    }
+
+    .section-head h2, .card h2 {
+      font-size: 15.5px;
+      line-height: 1.35;
+      font-weight: 750;
+      letter-spacing: -0.35px;
+    }
+
+    .nav-text {
+      font-size: 12.5px;
+      line-height: 1.35;
+      letter-spacing: -0.1px;
+    }
+
+    .stat-label {
+      font-size: 11.5px;
+      font-weight: 550;
+      letter-spacing: 0.05px;
+    }
+
+    .stat-value, .stat-number, .donut-center b, .metric-value {
+      font-variant-numeric: tabular-nums;
+      letter-spacing: -0.65px;
+      font-weight: 760;
+    }
+
+    .muted, .crumb, .subtitle, .profile small, .brand small {
+      line-height: 1.6;
+    }
+
+    button, input, select, textarea {
+      letter-spacing: inherit;
+    }
+
+    .btn, .icon-btn, .search, input, select, textarea {
+      font-size: 12px;
+    }
+
+    th {
+      font-weight: 750;
+      letter-spacing: 0.65px;
+    }
+
+    td {
+      line-height: 1.5;
+    }
+
+    .brand h2 {
+      font-size: 15.5px;
+      letter-spacing: -0.45px;
+    }
+
+    .brand small {
+      font-size: 9px;
+      letter-spacing: 1.05px;
+      font-weight: 600;
+    }
+
+    .nav, .card, .btn, .icon-btn {
+      -webkit-tap-highlight-color: transparent;
+    }
+
+  </style>
+</head>
+
+<body>
+<div class="app">
+
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="logo">✦</div>
+      <div class="brand-text">
+        <h2>IntelliSchool <span style="color:#73c9ff">AI</span></h2>
+        <small>SMART SCHOOL PLATFORM</small>
+      </div>
+    </div>
+
+    <div class="nav-label">WORKSPACE</div>
+    <button class="nav active" data-page="dashboard"><span class="nav-icon">▦</span><span class="nav-text">Dashboard</span></button>
+    <button class="nav" data-page="students"><span class="nav-icon">♙</span><span class="nav-text">Students</span></button>
+    <button class="nav" data-page="teachers"><span class="nav-icon">♧</span><span class="nav-text">Teachers & Classes</span></button>
+    <button class="nav" data-page="attendance"><span class="nav-icon">◷</span><span class="nav-text">Attendance</span></button>
+    <button class="nav" data-page="fees"><span class="nav-icon">◇</span><span class="nav-text">Fees & Payments</span></button>
+    <button class="nav" data-page="results"><span class="nav-icon">▤</span><span class="nav-text">Exams & Results</span></button>
+    <button class="nav" data-page="notices"><span class="nav-icon">▧</span><span class="nav-text">Notices</span></button>
+
+    <div class="nav-label">INTELLIGENCE</div>
+    <button class="nav" data-page="agent"><span class="nav-icon">✧</span><span class="nav-text">AI Agent</span><span class="nav-badge">AI</span></button>
+    <button class="nav" data-page="reports"><span class="nav-icon">▥</span><span class="nav-text">Reports</span></button>
+    <button class="nav" data-page="settings"><span class="nav-icon">⚙</span><span class="nav-text">Settings</span></button>
+
+    <div class="sidebar-bottom">
+      <b>✦ AI Workspace</b>
+      <p>Smart assistance for school operations and decision support.</p>
+      <span class="nav-badge">Workspace ready</span>
+    </div>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div>
+        <div class="crumb">INTELLISCHOOL AI / <span id="breadcrumb">OVERVIEW</span></div>
+        <h1 id="pageTitle">School Overview</h1>
+        <div class="subtitle" id="pageSubtitle">Your school's operations, all in one intelligent workspace.</div>
+      </div>
+
+      <div class="top-actions">
+        <input id="globalSearch" class="search" placeholder="⌕  Search students..." aria-label="Search students">
+        <button id="themeToggle" class="icon-btn" type="button" title="Switch theme" aria-label="Switch theme">☾</button>
+        <button id="notificationButton" class="icon-btn" type="button" title="Notifications" aria-label="Notifications">♧</button>
+        <div class="profile">
+          <div class="avatar">A</div>
+          <div class="profile-text">
+            <b id="profileName">School Admin</b>
+            <small>Administrator</small>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- DASHBOARD -->
+    <section class="page active" id="dashboard">
+      <div class="section-head">
+        <h2>Dashboard Overview</h2>
+        <span class="muted">Sample dashboard figures</span>
+      </div>
+
+      <div class="stats">
+        <div class="card">
+          <div class="stat-top"><span class="stat-label">Total Students</span><span class="stat-icon purple">♙</span></div>
+          <div class="stat-number" id="totalStudents">248</div>
+          <span class="trend">Student enrollment</span>
+        </div>
+        <div class="card">
+          <div class="stat-top"><span class="stat-label">Total Teachers</span><span class="stat-icon blue">♧</span></div>
+          <div class="stat-number">18</div>
+          <span class="trend">Teaching staff</span>
+        </div>
+        <div class="card">
+          <div class="stat-top"><span class="stat-label">Present Today</span><span class="stat-icon green">✓</span></div>
+          <div class="stat-number">215</div>
+          <span class="trend">Attendance overview</span>
+        </div>
+        <div class="card">
+          <div class="stat-top"><span class="stat-label">Pending Fees</span><span class="stat-icon orange">◇</span></div>
+          <div class="stat-number">32</div>
+          <span class="trend">Sample count</span>
+        </div>
+      </div>
+
+      <div class="grid-main">
+        <div class="card">
+          <div class="section-head">
+            <h2>Attendance Overview</h2>
+            <span class="muted">Weekly sample</span>
+          </div>
+          <div class="legend">
+            <span style="--legend-color:var(--accent)">Attendance</span>
+            <span style="--legend-color:var(--teal)">Daily trend</span>
+          </div>
+          <svg class="chart" viewBox="0 0 600 220" preserveAspectRatio="none" role="img" aria-label="Illustrative weekly attendance chart">
+            <g class="chart-grid">
+              <path d="M35 25H590 M35 65H590 M35 105H590 M35 145H590 M35 185H590"/>
+            </g>
+            <path d="M35 100 L125 72 L215 83 L305 45 L395 61 L485 34 L580 50 L580 185 L35 185 Z" fill="#438fe3" opacity=".10"/>
+            <path d="M35 100 L125 72 L215 83 L305 45 L395 61 L485 34 L580 50" fill="none" stroke="#2878d4" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M35 130 L125 115 L215 125 L305 98 L395 109 L485 87 L580 98" fill="none" stroke="#25a8c7" stroke-width="2.5" stroke-linecap="round"/>
+            <g class="chart-label">
+              <text x="35" y="207">Mon</text><text x="125" y="207">Tue</text>
+              <text x="215" y="207">Wed</text><text x="305" y="207">Thu</text>
+              <text x="395" y="207">Fri</text><text x="485" y="207">Sat</text>
+              <text x="570" y="207">Sun</text>
+            </g>
+          </svg>
+        </div>
+
+        <div class="card">
+          <div class="section-head"><h2>Student Distribution</h2></div>
+          <div class="donut-wrap">
+            <div class="donut"><div class="donut-inner"><b>248</b><small>STUDENTS</small></div></div>
+            <div class="legend-list">
+              <div><span class="dot" style="background:var(--accent)"></span>Primary <b>68%</b></div>
+              <div><span class="dot" style="background:var(--teal)"></span>Middle <b>20%</b></div>
+              <div><span class="dot" style="background:#b8c8d8"></span>Secondary <b>12%</b></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid-main">
+        <div class="card">
+          <div class="section-head">
+            <h2>Recent Students</h2>
+            <button class="btn" data-go="students" type="button">View all →</button>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Student</th><th>Class</th><th>Status</th></tr></thead>
+              <tbody id="recentStudents"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="section-head"><h2>Recent Activities</h2></div>
+          <div class="activity">
+            <div class="activity-item"><div class="activity-icon green">✓</div><div><b>Attendance monitoring</b><p>Daily attendance can be recorded in the attendance module.</p></div></div>
+            <div class="activity-item"><div class="activity-icon purple">✧</div><div><b>AI Agent workspace</b><p>Open the assistant to submit a school-related question.</p></div></div>
+            <div class="activity-item"><div class="activity-icon blue">▤</div><div><b>Academic records</b><p>Student records and results have separate workspace pages.</p></div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-head"><h2>Quick Actions</h2></div>
+      <div class="quick-grid">
+        <button class="quick" data-go="students" type="button"><span class="stat-icon purple">♙</span><b>Add Student</b><small>Create a student record.</small></button>
+        <button class="quick" data-go="attendance" type="button"><span class="stat-icon green">◷</span><b>Take Attendance</b><small>Record daily student attendance.</small></button>
+        <button class="quick" data-go="fees" type="button"><span class="stat-icon orange">◇</span><b>Record Fee</b><small>Submit a student payment.</small></button>
+        <button class="quick" data-go="notices" type="button"><span class="stat-icon blue">▧</span><b>Publish Notice</b><small>Create a school announcement.</small></button>
+        <button class="quick" data-go="results" type="button"><span class="stat-icon purple">▤</span><b>View Results</b><small>Enter examination marks.</small></button>
+        <button class="quick" data-go="agent" type="button"><span class="stat-icon green">✧</span><b>AI Agent</b><small>Open the assistant workspace.</small></button>
+      </div>
+    </section>
+
+    <!-- STUDENTS -->
+    <section class="page" id="students">
+      <div class="section-head"><h2>Student Management</h2><span class="muted">Student directory</span></div>
+
+      <div class="card">
+        <form id="studentForm">
+          <div class="form-grid">
+            <div class="field"><label for="studentName">Student Full Name</label><input id="studentName" name="name" required placeholder="Enter student name"></div>
+            <div class="field"><label for="studentClass">Class / Grade</label><input id="studentClass" name="class_name" required minlength="2" placeholder="e.g. Grade 8"></div>
+            <div class="field"><label for="parentName">Parent / Guardian Name</label><input id="parentName" name="parent_name" required minlength="2" placeholder="Enter guardian name"></div>
+            <div class="field"><label for="studentEmail">Parent Email (optional)</label><input id="studentEmail" name="email" type="email" placeholder="parent@example.com"></div>
+            <div class="field"><label for="studentFeeTotal">Total Fee (PKR)</label><input id="studentFeeTotal" name="fee_total" type="number" min="0" step="1" value="10000" required></div>
+          </div>
+          <div class="form-actions"><button class="btn primary" type="submit">＋ Add Student</button></div>
+        </form>
+      </div>
+
+      <div class="card" style="margin-top:17px">
+        <div class="section-head"><h2>All Students</h2><input id="studentSearch" class="search" placeholder="Filter records..." aria-label="Filter student records"></div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Student</th><th>Student ID</th><th>Class</th><th>Guardian</th><th>Status</th></tr></thead>
+            <tbody id="studentRows"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- TEACHERS -->
+    <section class="page" id="teachers">
+      <div class="section-head"><h2>Teachers & Classes</h2></div>
+      <div class="stats">
+        <div class="card"><div class="stat-label">Teaching Staff</div><div class="stat-number">18</div><span class="muted">Sample data</span></div>
+        <div class="card"><div class="stat-label">Active Classes</div><div class="stat-number">12</div><span class="muted">Sample data</span></div>
+        <div class="card"><div class="stat-label">Departments</div><div class="stat-number">6</div><span class="muted">Sample data</span></div>
+        <div class="card"><div class="stat-label">Timetable</div><div class="stat-number">—</div><span class="muted">Integration pending</span></div>
+      </div>
+      <div class="card">
+        <h2>Academic Organization</h2>
+        <p class="subtitle">This workspace is the interface preview for teacher profiles, subject assignments, class allocations and timetables. Connect the relevant backend routes to manage real records.</p>
+      </div>
+    </section>
+
+    <!-- ATTENDANCE -->
+    <section class="page" id="attendance">
+      <div class="section-head"><h2>Attendance Management</h2></div>
+      <div class="card">
+        <form id="attendanceForm">
+          <div class="form-grid">
+            <div class="field"><label for="attendanceStudentId">Registered Student ID</label><input id="attendanceStudentId" name="student_id" type="number" min="1" step="1" required placeholder="Numeric ID from student list"></div>
+            <div class="field"><label for="attendanceDate">Date</label><input id="attendanceDate" name="date" type="date" required></div>
+            <div class="field"><label for="attendanceStatus">Attendance Status</label><select id="attendanceStatus" name="status"><option value="Present">Present</option><option value="Absent">Absent</option><option value="Late">Late</option></select></div>
+          </div>
+          <div class="form-actions"><button class="btn primary" type="submit">Save Attendance</button></div>
+        </form>
+      </div>
+      <div class="card" style="margin-top:17px"><h2>Attendance Guidelines</h2><p class="subtitle">Use the student's registered ID and select the correct date and status. The record will be submitted to the configured API.</p></div>
+    </section>
+
+    <!-- FEES -->
+    <section class="page" id="fees">
+      <div class="section-head"><h2>Fees & Payments</h2></div>
+      <div class="stats">
+        <div class="card"><div class="stat-label">Collected</div><div class="stat-number" id="feesCollected">PKR 0</div><span class="muted">Total paid, from database</span></div>
+        <div class="card"><div class="stat-label">Students With Payments</div><div class="stat-number" id="feesPaidStudents">0</div><span class="muted">Students with a recorded payment</span></div>
+        <div class="card"><div class="stat-label">Outstanding Fees</div><div class="stat-number" id="feesOutstanding">PKR 0</div><span class="muted">Remaining balances, from database</span></div>
+        <div class="card"><div class="stat-label">Payment Tracking</div><div class="stat-number" id="feesTrackingStatus">Loading…</div><span class="muted" id="feesTrackingHint">Connecting to finance records</span></div>
+      </div>
+      <div class="card">
+        <h2>Record a Payment</h2>
+        <form id="feeForm" style="margin-top:18px">
+          <div class="form-grid">
+            <div class="field"><label for="feeStudentId">Student ID</label><input id="feeStudentId" name="student_id" required placeholder="Student ID"></div>
+            <div class="field"><label for="feeAmount">Amount (PKR)</label><input id="feeAmount" name="amount" type="number" min="1" required placeholder="e.g. 15000"></div>
+            <div class="field"><label for="feeMethod">Payment Method</label><select id="feeMethod" name="method"><option value="Cash">Cash</option><option value="Bank Transfer">Bank Transfer</option><option value="Online">Online</option><option value="Other">Other</option></select></div>
+            <div class="field"><label for="feeReference">Receipt / Reference</label><input id="feeReference" name="reference" placeholder="Optional reference"></div>
+          </div>
+          <div class="form-actions"><button class="btn primary" type="submit">Record Payment</button></div>
+        </form>
+      </div>
+      <div class="card" style="margin-top:17px">
+        <div class="section-head"><h2>Student Fee Overview</h2><span class="muted">Live database balances</span></div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Student ID</th><th>Student</th><th>Class</th><th>Total Fee</th><th>Paid</th><th>Balance</th><th>Status</th></tr></thead>
+            <tbody id="feeRows"><tr><td colspan="7" class="empty">Loading fee records…</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- RESULTS -->
+    <section class="page" id="results">
+      <div class="section-head"><h2>Examination Results</h2></div>
+      <div class="card">
+        <form id="resultForm">
+          <div class="form-grid">
+            <div class="field"><label for="resultStudentId">Student ID</label><input id="resultStudentId" name="student_id" required placeholder="Student ID"></div>
+            <div class="field"><label for="resultSubject">Subject</label><input id="resultSubject" name="subject" required placeholder="e.g. Mathematics"></div>
+            <div class="field"><label for="resultMarks">Marks Obtained (out of 100)</label><input id="resultMarks" name="marks" type="number" min="0" max="100" step="0.5" required></div>
+          </div>
+          <div class="form-actions"><button class="btn primary" type="submit">Save Result</button></div>
+        </form>
+      </div>
+      <div class="card" style="margin-top:17px"><h2>Academic Performance</h2><p class="subtitle">Use this form to submit marks for a student. The result is stored only if the backend accepts the submitted fields.</p></div>
+    </section>
+
+    <!-- NOTICES -->
+    <section class="page" id="notices">
+      <div class="section-head"><h2>Notices & Announcements</h2></div>
+      <div class="card">
+        <form id="noticeForm">
+          <div class="form-grid">
+            <div class="field full"><label for="noticeTitle">Notice Title</label><input id="noticeTitle" name="title" required placeholder="Enter announcement title"></div>
+            <div class="field"><label for="noticeAudience">Audience</label><select id="noticeAudience" name="audience"><option value="All">Everyone</option><option value="Students">Students</option><option value="Teachers">Teachers</option><option value="Parents">Parents</option></select></div>
+            <div class="field full"><label for="noticeMessage">Notice Details</label><textarea id="noticeMessage" name="body" required minlength="2" placeholder="Write the announcement..."></textarea></div>
+          </div>
+          <div class="form-actions"><button class="btn primary" type="submit">Publish Notice</button></div>
+        </form>
+      </div>
+      <div class="card" style="margin-top:17px">
+        <div class="section-head"><h2>Recent Notices</h2></div>
+        <div id="noticeList"><div class="empty">No notices loaded yet.</div></div>
+      </div>
+    </section>
+
+    <!-- AI AGENT -->
+    <section class="page" id="agent">
+      <div class="section-head"><h2>AI Agent Workspace</h2><span class="status">Agent interface</span></div>
+      <div class="grid-main">
+        <div class="card chat-box">
+          <div>
+            <h2>School Intelligence Assistant</h2>
+            <p class="subtitle">Ask a question about school administration.</p>
+          </div>
+          <div id="chatMessages" class="chat-messages">
+            <div class="message bot">Welcome to IntelliSchool AI. Submit a school-related question below. Responses depend on your connected backend agent.</div>
+          </div>
+          <div class="suggestions">
+            <button type="button" data-prompt="Summarize today's attendance.">Attendance summary</button>
+            <button type="button" data-prompt="How can we track unpaid fees?">Fee tracking</button>
+            <button type="button" data-prompt="How can student performance be reviewed?">Student performance</button>
+          </div>
+          <form id="chatForm" class="chat-input">
+            <input id="chatInput" placeholder="Ask the school AI agent..." required>
+            <button class="btn primary" type="submit">Send ↑</button>
+          </form>
+        </div>
+        <div class="card">
+          <h2>Agent Capabilities</h2>
+          <div class="activity">
+            <div class="activity-item"><div class="activity-icon">⌕</div><div><b>Understand requests</b><p>Interpret school-related questions.</p></div></div>
+            <div class="activity-item"><div class="activity-icon">◇</div><div><b>Process information</b><p>Use connected school data and tools when supported.</p></div></div>
+            <div class="activity-item"><div class="activity-icon">✓</div><div><b>Support decisions</b><p>Provide decision support with appropriate human review.</p></div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- REPORTS -->
+    <section class="page" id="reports">
+      <div class="section-head"><h2>Reports & Analytics</h2></div>
+      <div class="stats">
+        <div class="card"><div class="stat-label">Enrollment</div><div class="stat-number" id="reportStudents">248</div><span class="muted">Sample figure</span></div>
+        <div class="card"><div class="stat-label">Attendance</div><div class="stat-number">86.7%</div><span class="muted">Sample figure</span></div>
+        <div class="card"><div class="stat-label">Fee Collection</div><div class="stat-number">PKR 8.4M</div><span class="muted">Sample figure</span></div>
+        <div class="card"><div class="stat-label">Teaching Staff</div><div class="stat-number">18</div><span class="muted">Sample figure</span></div>
+      </div>
+      <div class="card">
+        <h2>Operational Insights</h2>
+        <p class="subtitle">Review school enrollment, attendance, fee collection and academic performance. Figures labelled as samples are illustrative and are not verified live school data.</p>
+        <div class="form-actions"><button class="btn" id="printReport" type="button">Print / Save Report</button></div>
+      </div>
+    </section>
+
+    <!-- SETTINGS -->
+    <section class="page" id="settings">
+      <div class="section-head"><h2>Workspace Settings</h2><span class="muted">Personalize your dashboard</span></div>
+
+      <div class="card">
+        <h2>Appearance</h2>
+        <p class="subtitle">Choose the theme that works best for you.</p>
+        <div class="form-actions">
+          <button class="btn primary" id="lightModeButton" type="button">☀ Light Mode</button>
+          <button class="btn" id="darkModeButton" type="button">☾ Dark Mode</button>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:17px">
+        <h2>Profile Preferences</h2>
+        <p class="subtitle">Change the display name shown in this browser.</p>
+        <form id="profileForm" style="margin-top:18px">
+          <div class="form-grid">
+            <div class="field"><label for="settingsName">Display Name</label><input id="settingsName" name="display_name" maxlength="60" required placeholder="School Admin"></div>
+            <div class="field"><label>Workspace Role</label><input value="Administrator" disabled></div>
+          </div>
+          <div class="form-actions"><button class="btn primary" type="submit">Save Preferences</button></div>
+        </form>
+      </div>
+
+      <div class="card" style="margin-top:17px">
+        <h2>Notifications</h2>
+        <div class="setting-row">
+          <div><b>Interface notifications</b><p>Enable or disable confirmation messages in this browser.</p></div>
+          <input class="switch" id="notificationsToggle" type="checkbox" checked aria-label="Enable interface notifications">
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:17px">
+        <h2>System Information</h2>
+        <div class="setting-row"><div><b>Application</b><p>IntelliSchool AI</p></div><span class="muted">School management workspace</span></div>
+        <div class="setting-row"><div><b>Backend connection</b><p>Uses the current FastAPI application.</p></div><button class="btn" id="checkBackendButton" type="button">Check Connection</button></div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+<script>
+"use strict";
+
+/* -------------------------------------------------------
+   NAVIGATION
+------------------------------------------------------- */
+
+const pageInfo = {
+  dashboard: ["School Overview", "OVERVIEW", "Your school's operations, all in one intelligent workspace."],
+  students: ["Student Management", "STUDENTS", "Manage student records and guardian information."],
+  teachers: ["Teachers & Classes", "ACADEMICS", "Explore staff and academic organization."],
+  attendance: ["Attendance Management", "ATTENDANCE", "Record and review daily attendance."],
+  fees: ["Fees & Payments", "FINANCE", "Manage student payment records."],
+  results: ["Examination Results", "RESULTS", "Maintain student assessment records."],
+  notices: ["Notices & Announcements", "COMMUNICATION", "Publish school-wide announcements."],
+  agent: ["AI Agent Workspace", "INTELLIGENCE", "An assistant interface for school operations."],
+  reports: ["Reports & Analytics", "ANALYTICS", "Review school performance indicators."],
+  settings: ["Workspace Settings", "SETTINGS", "Personalize your dashboard preferences."]
+};
+
+const pages = [...document.querySelectorAll(".page")];
+const navButtons = [...document.querySelectorAll(".nav")];
+
+function navigateTo(pageId) {
+  if (!pageInfo[pageId]) return;
+
+  pages.forEach(page => {
+    page.classList.toggle("active", page.id === pageId);
+  });
+
+  navButtons.forEach(button => {
+    button.classList.toggle("active", button.dataset.page === pageId);
+  });
+
+  document.getElementById("pageTitle").textContent = pageInfo[pageId][0];
+  document.getElementById("breadcrumb").textContent = pageInfo[pageId][1];
+  document.getElementById("pageSubtitle").textContent = pageInfo[pageId][2];
+
+  try {
+    sessionStorage.setItem("intellischool-current-page", pageId);
+  } catch (error) {}
+}
+
+navButtons.forEach(button => {
+  button.addEventListener("click", () => navigateTo(button.dataset.page));
+});
+
+document.querySelectorAll("[data-go]").forEach(button => {
+  button.addEventListener("click", () => navigateTo(button.dataset.go));
+});
+
+/* -------------------------------------------------------
+   TOAST NOTIFICATIONS
+------------------------------------------------------- */
+
+let toastTimer;
+
+function toast(message) {
+  let enabled = true;
+
+  try {
+    enabled = localStorage.getItem("intellischool-notifications") !== "off";
+  } catch (error) {}
+
+  if (!enabled) return;
+
+  const element = document.getElementById("toast");
+  element.textContent = message;
+  element.style.display = "block";
+
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => {
+    element.style.display = "none";
+  }, 3200);
+}
+
+/* -------------------------------------------------------
+   LIGHT / DARK THEME
+------------------------------------------------------- */
+
+const themeToggle = document.getElementById("themeToggle");
+
+function applyTheme(theme, showMessage = false) {
+  const selectedTheme = theme === "dark" ? "dark" : "light";
+
+  document.documentElement.dataset.theme = selectedTheme;
+
+  themeToggle.textContent = selectedTheme === "dark" ? "☀" : "☾";
+  themeToggle.title = selectedTheme === "dark"
+    ? "Switch to light mode"
+    : "Switch to dark mode";
+  themeToggle.setAttribute("aria-label", themeToggle.title);
+  themeToggle.setAttribute("aria-pressed", String(selectedTheme === "dark"));
+
+  document.getElementById("lightModeButton").classList.toggle(
+    "primary", selectedTheme === "light"
+  );
+
+  document.getElementById("darkModeButton").classList.toggle(
+    "primary", selectedTheme === "dark"
+  );
+
+  try {
+    localStorage.setItem("intellischool-theme", selectedTheme);
+  } catch (error) {}
+
+  if (showMessage) {
+    toast(selectedTheme === "dark" ? "Dark mode enabled." : "Light mode enabled.");
+  }
+}
+
+let initialTheme = "light";
+
+try {
+  const savedTheme = localStorage.getItem("intellischool-theme");
+  initialTheme = savedTheme === "dark" ? "dark" : "light";
+} catch (error) {}
+
+applyTheme(initialTheme);
+
+themeToggle.addEventListener("click", () => {
+  const currentTheme = document.documentElement.dataset.theme || "light";
+  applyTheme(currentTheme === "light" ? "dark" : "light", true);
+});
+
+document.getElementById("lightModeButton").addEventListener("click", () => {
+  applyTheme("light", true);
+});
+
+document.getElementById("darkModeButton").addEventListener("click", () => {
+  applyTheme("dark", true);
+});
+
+/* -------------------------------------------------------
+   PROFILE SETTINGS
+------------------------------------------------------- */
+
+const profileName = document.getElementById("profileName");
+const settingsName = document.getElementById("settingsName");
+
+function loadProfileName() {
+  try {
+    const savedName = localStorage.getItem("intellischool-display-name");
+    if (savedName) {
+      settingsName.value = savedName;
+      profileName.textContent = savedName;
+    }
+  } catch (error) {}
+}
+
+loadProfileName();
+
+document.getElementById("profileForm").addEventListener("submit", event => {
+  event.preventDefault();
+
+  const name = settingsName.value.trim();
+
+  if (!name) {
+    toast("Please enter a display name.");
+    return;
+  }
+
+  profileName.textContent = name;
+
+  try {
+    localStorage.setItem("intellischool-display-name", name);
+  } catch (error) {}
+
+  toast("Profile preferences saved in this browser.");
+});
+
+/* -------------------------------------------------------
+   NOTIFICATION PREFERENCE
+------------------------------------------------------- */
+
+const notificationsToggle = document.getElementById("notificationsToggle");
+
+try {
+  notificationsToggle.checked =
+    localStorage.getItem("intellischool-notifications") !== "off";
+} catch (error) {}
+
+notificationsToggle.addEventListener("change", event => {
+  try {
+    localStorage.setItem(
+      "intellischool-notifications",
+      event.target.checked ? "on" : "off"
+    );
+  } catch (error) {}
+
+  if (event.target.checked) {
+    toast("Interface notifications enabled.");
+  } else {
+    const element = document.getElementById("toast");
+    element.style.display = "none";
+  }
+});
+
+/* -------------------------------------------------------
+   API HELPER
+------------------------------------------------------- */
+
+async function apiRequest(url, options = {}) {
+  const response = await fetch(url, {
+    ...options,
+    headers: {
+      ...(options.body ? { "Content-Type": "application/json" } : {}),
+      ...(options.headers || {})
+    }
+  });
+
+  const raw = await response.text();
+  let data = {};
+
+  if (raw) {
+    try {
+      data = JSON.parse(raw);
+    } catch (error) {
+      data = { message: raw };
+    }
+  }
+
+  if (!response.ok) {
+    let detail = data.detail || data.message || "Request failed.";
+
+    if (Array.isArray(detail)) {
+      detail = detail.map(item => item.msg || JSON.stringify(item)).join("; ");
+    }
+
+    throw new Error(String(detail));
+  }
+
+  return data;
+}
+
+function postJSON(url, data) {
+  return apiRequest(url, {
+    method: "POST",
+    body: JSON.stringify(data)
+  });
+}
+
+function formValues(form) {
+  return Object.fromEntries(new FormData(form).entries());
+}
+
+function safeHTML(value) {
+  return String(value ?? "").replace(/[&<>"']/g, character => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;"
+  })[character]);
+}
+
+/* -------------------------------------------------------
+   STUDENT DIRECTORY
+------------------------------------------------------- */
+
+/* Demo records are displayed until the backend returns data. */
+let students = [
+  { name: "Ayesha Khan", student_id: "ST-1024", class_name: "Grade 8", parent_name: "Sana Khan" },
+  { name: "Muhammad Ali", student_id: "ST-1025", class_name: "Grade 7", parent_name: "Ahmed Ali" },
+  { name: "Sara Ahmed", student_id: "ST-1026", class_name: "Grade 6", parent_name: "Farah Ahmed" },
+  { name: "Ahmed Raza", student_id: "ST-1027", class_name: "Grade 9", parent_name: "Imran Raza" },
+  { name: "Fatima Noor", student_id: "ST-1028", class_name: "Grade 10", parent_name: "Nadia Noor" }
+];
+
+let studentDataFromAPI = false;
+
+function initials(name) {
+  return String(name || "?")
+    .trim()
+    .split(/\s+/)
+    .slice(0, 2)
+    .map(part => part[0] || "")
+    .join("")
+    .toUpperCase();
+}
+
+function renderStudents() {
+  const query = (
+    document.getElementById("studentSearch").value ||
+    document.getElementById("globalSearch").value
+  ).trim().toLowerCase();
+
+  const filtered = students.filter(student =>
+    Object.values(student).join(" ").toLowerCase().includes(query)
+  );
+
+  const rows = document.getElementById("studentRows");
+
+  if (!filtered.length) {
+    rows.innerHTML = '<tr><td colspan="5" class="empty">No matching student records.</td></tr>';
+  } else {
+    rows.innerHTML = filtered.map(student => `
+      <tr>
+        <td>
+          <div class="student">
+            <div class="avatar">${safeHTML(initials(student.name))}</div>
+            <b>${safeHTML(student.name)}</b>
+          </div>
+        </td>
+        <td>${safeHTML(student.student_id)}</td>
+        <td>${safeHTML(student.class_name)}</td>
+        <td>${safeHTML(student.parent_name || "—")}</td>
+        <td><span class="status">Active</span></td>
+      </tr>
+    `).join("");
+  }
+
+  document.getElementById("recentStudents").innerHTML = students.slice(-4).reverse().map(student => `
+    <tr>
+      <td>
+        <div class="student">
+          <div class="avatar">${safeHTML(initials(student.name))}</div>
+          <div><b>${safeHTML(student.name)}</b><small>${safeHTML(student.student_id)}</small></div>
+        </div>
+      </td>
+      <td>${safeHTML(student.class_name)}</td>
+      <td><span class="status">Active</span></td>
+    </tr>
+  `).join("");
+
+  document.getElementById("totalStudents").textContent =
+    studentDataFromAPI ? students.length.toLocaleString() : "248";
+
+  document.getElementById("reportStudents").textContent =
+    studentDataFromAPI ? students.length.toLocaleString() : "248";
+}
+
+document.getElementById("studentSearch").addEventListener("input", renderStudents);
+
+document.getElementById("globalSearch").addEventListener("input", event => {
+  document.getElementById("studentSearch").value = event.target.value;
+  navigateTo("students");
+  renderStudents();
+});
+
+document.getElementById("studentForm").addEventListener("submit", async event => {
+  event.preventDefault();
+  const form = event.currentTarget;
+  const data = formValues(form);
+  const payload = {
+    name: String(data.name || "").trim(),
+    grade: String(data.class_name || "").trim(),
+    guardian: String(data.parent_name || "").trim(),
+    email: String(data.email || "").trim(),
+    fee_total: Number(data.fee_total),
+    actor: "Admin"
+  };
+  if (payload.name.length < 2 || payload.grade.length < 2 || payload.guardian.length < 2) {
+    toast("Enter the student name, class, and parent/guardian name."); return;
+  }
+  if (!Number.isFinite(payload.fee_total) || payload.fee_total < 0) {
+    toast("Enter a valid total fee amount."); return;
+  }
+  try {
+    const response = await postJSON("/api/students", payload);
+    toast(`Student saved successfully. Registered Student ID: ${response.id}`);
+    form.reset();
+    document.getElementById("studentFeeTotal").value = "10000";
+    await loadStudents();
+    await refreshDashboard();
+  } catch (error) {
+    toast("Student was not saved: " + error.message);
+  }
+});
+
+async function loadStudents() {
+  try {
+    const response = await apiRequest("/api/students");
+    const records = Array.isArray(response) ? response : (response.students || response.items || response.data || response.records);
+    if (!Array.isArray(records)) throw new Error("Unexpected student list response.");
+    students = records.map(record => ({
+      id: record.id,
+      name: record.name || "Unnamed Student",
+      student_id: String(record.id ?? ""),
+      class_name: record.grade || "—",
+      parent_name: record.guardian || "—",
+      email: record.email || "",
+      fee_total: record.fee_total ?? 0,
+      fee_paid: record.fee_paid ?? 0
+    }));
+    studentDataFromAPI = true;
+    renderStudents();
+    return records;
+  } catch (error) {
+    console.error("Student API could not be loaded:", error);
+    toast("Could not load students from the backend: " + error.message);
+    return [];
+  }
+}
+
+/* ATTENDANCE: send the API's exact schema. */
+document.getElementById("attendanceForm").addEventListener("submit", async event => {
+  event.preventDefault();
+  const form = event.currentTarget;
+  const data = formValues(form);
+  const payload = {
+    student_id: Number(data.student_id),
+    date: data.date,
+    status: data.status,
+    actor: "Admin"
+  };
+  if (!Number.isInteger(payload.student_id) || payload.student_id < 1) {
+    toast("Enter the numeric Registered Student ID shown in All Students."); return;
+  }
+  if (!payload.date) { toast("Select the attendance date."); return; }
+  try {
+    const result = await postJSON("/api/attendance", payload);
+    toast(result.message || "Attendance saved successfully.");
+    form.reset();
+    document.getElementById("attendanceDate").value = new Date().getFullYear() + "-" + String(new Date().getMonth() + 1).padStart(2, "0") + "-" + String(new Date().getDate()).padStart(2, "0");
+  } catch (error) {
+    toast("Attendance was not saved: " + error.message);
+  }
+});
+
+/* FEES: payment API expects student_id, amount, method and actor. */
+document.getElementById("feeForm").addEventListener("submit", async event => {
+  event.preventDefault();
+  const form = event.currentTarget;
+  const data = formValues(form);
+  const payload = { student_id: Number(data.student_id), amount: Number(data.amount), method: data.method || "Cash", actor: "Admin" };
+  if (!Number.isInteger(payload.student_id) || payload.student_id < 1 || !Number.isFinite(payload.amount) || payload.amount <= 0) {
+    toast("Enter a valid registered Student ID and payment amount."); return;
+  }
+  try {
+    const result = await postJSON("/api/payments", payload);
+    toast((result.message || "Payment saved successfully.") + (result.remaining_balance != null ? ` Remaining balance: PKR ${Number(result.remaining_balance).toLocaleString()}.` : ""));
+    form.reset();
+    await refreshDashboard();
+    await loadFees();
+  } catch (error) {
+    toast("Payment was not saved: " + error.message);
+  }
+});
+
+/* FEES: load real fee totals and student balances from /api/fees.
+   The backend currently stores cumulative paid amounts, not individual receipt history. */
+function formatPKR(value) {
+  return "PKR " + Number(value || 0).toLocaleString("en-PK", { maximumFractionDigits: 2 });
+}
+
+async function loadFees() {
+  const body = document.getElementById("feeRows");
+  try {
+    const records = await apiRequest("/api/fees");
+    const fees = Array.isArray(records) ? records : [];
+    const collected = fees.reduce((sum, row) => sum + Number(row.fee_paid || 0), 0);
+    const outstanding = fees.reduce((sum, row) => sum + Math.max(0, Number(row.balance || 0)), 0);
+    const paidStudents = fees.filter(row => Number(row.fee_paid || 0) > 0).length;
+    document.getElementById("feesCollected").textContent = formatPKR(collected);
+    document.getElementById("feesPaidStudents").textContent = paidStudents.toLocaleString();
+    document.getElementById("feesOutstanding").textContent = formatPKR(outstanding);
+    document.getElementById("feesTrackingStatus").textContent = "Live";
+    document.getElementById("feesTrackingHint").textContent = `${fees.length} student record(s) loaded`;
+    if (!body) return;
+    if (!fees.length) {
+      body.innerHTML = '<tr><td colspan="7" class="empty">No student fee records found. Add a student first.</td></tr>';
+      return;
+    }
+    body.innerHTML = fees.map(row => {
+      const status = String(row.status || (Number(row.balance || 0) <= 0 ? "Paid" : "Due"));
+      return `<tr>
+        <td>${safeHTML(row.student_id)}</td>
+        <td><b>${safeHTML(row.name || "—")}</b></td>
+        <td>${safeHTML(row.grade || "—")}</td>
+        <td>${safeHTML(formatPKR(row.fee_total))}</td>
+        <td>${safeHTML(formatPKR(row.fee_paid))}</td>
+        <td><b>${safeHTML(formatPKR(row.balance))}</b></td>
+        <td><span class="status ${status.toLowerCase() === "paid" ? "present" : "absent"}">${safeHTML(status)}</span></td>
+      </tr>`;
+    }).join("");
+  } catch (error) {
+    console.error("Fee records could not be loaded:", error);
+    document.getElementById("feesTrackingStatus").textContent = "Unavailable";
+    document.getElementById("feesTrackingHint").textContent = "Could not load finance data";
+    if (body) body.innerHTML = `<tr><td colspan="7" class="empty">Could not load fee records: ${safeHTML(error.message)}</td></tr>`;
+    toast("Fee records could not be loaded: " + error.message);
+  }
+}
+
+/* RESULTS: backend stores marks on a 0–100 scale, not total_marks. */
+document.getElementById("resultForm").addEventListener("submit", async event => {
+  event.preventDefault();
+  const form = event.currentTarget;
+  const data = formValues(form);
+  const payload = { student_id: Number(data.student_id), subject: String(data.subject || "").trim(), marks: Number(data.marks), actor: "Teacher" };
+  if (!Number.isInteger(payload.student_id) || payload.student_id < 1 || payload.subject.length < 2 || !Number.isFinite(payload.marks) || payload.marks < 0 || payload.marks > 100) {
+    toast("Enter a valid Student ID, subject, and marks from 0 to 100."); return;
+  }
+  try {
+    const result = await postJSON("/api/results", payload);
+    toast(result.message || "Result saved successfully.");
+    form.reset();
+  } catch (error) {
+    toast("Result was not saved: " + error.message);
+  }
+});
+
+/* NOTICES: backend expects body, audience and actor. */
+function displayNotice(title, message, audience = "All") {
+  const list = document.getElementById("noticeList");
+  const empty = list.querySelector(".empty");
+  if (empty) empty.remove();
+  const card = document.createElement("div");
+  card.className = "notice";
+  const heading = document.createElement("h3");
+  heading.textContent = title;
+  const paragraph = document.createElement("p");
+  paragraph.textContent = message;
+  const meta = document.createElement("small");
+  meta.className = "muted";
+  meta.textContent = "Audience: " + (audience || "All");
+  card.append(heading, paragraph, meta);
+  list.prepend(card);
+}
+
+document.getElementById("noticeForm").addEventListener("submit", async event => {
+  event.preventDefault();
+  const form = event.currentTarget;
+  const data = formValues(form);
+  const payload = { title: String(data.title || "").trim(), body: String(data.body || "").trim(), audience: data.audience || "All", actor: "Admin" };
+  if (payload.title.length < 2 || payload.body.length < 2) { toast("Enter a notice title and details."); return; }
+  try {
+    const result = await postJSON("/api/notices", payload);
+    displayNotice(payload.title, payload.body, payload.audience);
+    form.reset();
+    toast(result.message || "Notice published successfully.");
+  } catch (error) {
+    toast("Notice was not saved: " + error.message);
+  }
+});
+
+async function loadNotices() {
+  try {
+    const response = await apiRequest("/api/notices");
+    const records = Array.isArray(response) ? response : (response.notices || response.items || response.data || response.records);
+    if (!Array.isArray(records)) throw new Error("Unexpected notices response.");
+    const list = document.getElementById("noticeList");
+    list.innerHTML = "";
+    if (!records.length) { list.innerHTML = '<div class="empty">No notices available.</div>'; return; }
+    records.forEach(notice => displayNotice(notice.title || "School Notice", notice.body || notice.message || "", notice.audience || "All"));
+  } catch (error) {
+    console.error("Notice API could not be loaded:", error);
+  }
+}
+
+async function refreshDashboard() {
+  try {
+    const data = await apiRequest("/api/dashboard");
+    const total = document.getElementById("totalStudents");
+    const report = document.getElementById("reportStudents");
+    if (total) total.textContent = Number(data.students || 0).toLocaleString();
+    if (report) report.textContent = Number(data.students || 0).toLocaleString();
+    const present = document.getElementById("presentToday");
+    const absent = document.getElementById("absentToday");
+    if (present) present.textContent = Number(data.present_today || 0).toLocaleString();
+    if (absent) absent.textContent = Number(data.absent_today || 0).toLocaleString();
+  } catch (error) {
+    console.info("Dashboard metrics were not refreshed:", error.message);
+  }
+}
+
+/* -------------------------------------------------------
+   AI AGENT
+------------------------------------------------------- */
+
+const chatMessages = document.getElementById("chatMessages");
+
+function addChatMessage(message, type) {
+  const element = document.createElement("div");
+  element.className = "message " + type;
+  element.textContent = message;
+  chatMessages.appendChild(element);
+  chatMessages.scrollTop = chatMessages.scrollHeight;
+  return element;
+}
+
+async function sendAgentMessage(message) {
+  const cleaned = message.trim();
+  if (!cleaned) return;
+
+  addChatMessage(cleaned, "user");
+
+  const waiting = addChatMessage("Processing your request...", "bot");
+
+  try {
+    const response = await postJSON("/api/agent", {
+      message: cleaned,
+      role: "Admin"
+    });
+
+    waiting.textContent =
+      response.response ||
+      response.answer ||
+      response.message ||
+      "The request was processed, but the server returned no response text.";
+  } catch (error) {
+    waiting.textContent =
+      "The AI Agent request failed: " + error.message +
+      "\n\nPlease check the backend route and its required request fields.";
+  }
+
+  chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+document.getElementById("chatForm").addEventListener("submit", event => {
+  event.preventDefault();
+
+  const input = document.getElementById("chatInput");
+  const message = input.value.trim();
+
+  if (!message) return;
+
+  input.value = "";
+  sendAgentMessage(message);
+});
+
+document.querySelectorAll("[data-prompt]").forEach(button => {
+  button.addEventListener("click", () => {
+    sendAgentMessage(button.dataset.prompt);
+  });
+});
+
+/* -------------------------------------------------------
+   SETTINGS: BACKEND HEALTH CHECK
+------------------------------------------------------- */
+
+document.getElementById("checkBackendButton").addEventListener("click", async () => {
+  try {
+    const response = await apiRequest("/api/health");
+
+    toast("Backend connected: " + (
+      response.status || response.service || "Healthy"
+    ));
+  } catch (error) {
+    toast("Backend connection failed: " + error.message);
+  }
+});
+
+/* -------------------------------------------------------
+   REPORT
+------------------------------------------------------- */
+
+document.getElementById("printReport").addEventListener("click", () => {
+  window.print();
+});
+
+/* -------------------------------------------------------
+   INITIALIZATION
+------------------------------------------------------- */
+
+renderStudents();
+
+/* Restore the last open page for this browser session. */
+try {
+  const lastPage = sessionStorage.getItem("intellischool-current-page");
+  if (lastPage && pageInfo[lastPage]) {
+    navigateTo(lastPage);
+  }
+} catch (error) {}
+
+/* Load available live records without blocking the interface. */
+loadStudents();
+loadNotices();
+refreshDashboard();
+loadFees();
+
+document.getElementById("notificationButton").addEventListener("click", () => {
+  toast("You are viewing the IntelliSchool AI workspace.");
+});
+</script>
+</body>
+</html>
